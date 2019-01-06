@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+</head>
+<body>
+  <div class="holder">
+    <div class="input-holder">
+      <input class="input" type="text" name="myInput" placeholder=" ">
+      <div class="placeholder">Movie Name</div>
+    </div>
+  </div>
+  <div id="app"></div>
+</body>
+<script>
+var app = $('#app')
+var container = $('<div></div>').addClass('container')
+app.append(container)
+
+var input = document.querySelector('input[type="text"]');
+$('input[name=myInput]').on('change',function(){
+  console.log($(this).val())
+  container.empty()
+  getSearchList({
+    query: $(this).val(),
+  })
+})
+
+// for TMDb
+// getSearchList('復仇者')
+function getSearchList(params){
+  var apiKeyT = "ac53d6d75da27e33c65825f9b41bb633";
+  var urlT ="https://api.themoviedb.org/3/search/movie?api_key=" + apiKeyT + "&query=" + params.query;
+  $.ajax({
+    url: urlT,
+    type: 'GET',
+    dataType: 'JSON',
+    success: function(data,e,response,request){
+      // console.log(data)
+      // params.success(data)
+    
+      successGet(data)
+      
+    },
+    error:function(e){
+      console.log('error' ,e)
+    },
+  });
+}
+function successGet(data){
+  var itemsProcessed = 0;
+  var results = data.results
+  results.forEach(element => {
+    createItem(element)
+    itemsProcessed++
+    if(itemsProcessed == results.length){
+      console.log('ok')
+      eachItem()
+    }
+  })
+}
+
+
+function createItem(element){
+  // console.log(element)
+  var picURL = 'https://image.tmdb.org/t/p/w300'+element.poster_path
+
+  var item = $('<div></div>').addClass('item')
+  item.append('<img src='+picURL+'>')
+  container.append(item)
+
+} 
+function eachItem(){
+  console.log('eachme')
+  $( ".item" ).each(function( index ) {
+    var row = 	$(this)
+    setTimeout(() => {
+      row.addClass('fadeIn')
+    }, 100*index);
+  });
+}
+
+</script>
+</html>
